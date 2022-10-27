@@ -810,6 +810,11 @@ agent-base@6:
   dependencies:
     debug "4"
 
+animate.css@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/animate.css/-/animate.css-4.1.1.tgz#614ec5a81131d7e4dc362a58143f7406abd68075"
+  integrity sha512-+mRmCTv6SbCmtYJCN4faJMNFVNN5EuCTTprDTAo7YzIGji2KADmakjVA3+8mVDkZ2Bf09vayB35lSQIex2+QaQ==
+
 ansi-escapes@^4.3.0:
   version "4.3.2"
   resolved "https://registry.yarnpkg.com/ansi-escapes/-/ansi-escapes-4.3.2.tgz#6b2291d1db7d98b6521d5f1efa42d0f3a9feb65e"
@@ -1037,6 +1042,11 @@ builtin-modules@^3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/builtin-modules/-/builtin-modules-3.3.0.tgz#cae62812b89801e9656336e46223e030386be7b6"
   integrity sha512-zhaCDicdLuWN5UbN5IMnFqNMhNfo919sH85y2/ea+5Yg9TsTkeZxpL+JLbp6cgYFS4sRLp3YV4S6yDuqVWHYOw==
+
+bulma-toast@^2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/bulma-toast/-/bulma-toast-2.4.1.tgz#1e0ea72a810af2cc11a5c39cf4051567f5c29434"
+  integrity sha512-Gwa40dH0gyO3/azJxzFSZD2PKcFlp55HWyPE3gV8gm1WGXyyKrNDCzFlsY8XqxstNRp+xtcdo2L0Y4df+iWNWg==
 
 bulma@^0.9.4:
   version "0.9.4"
