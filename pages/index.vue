@@ -1,10 +1,55 @@
 <template>
-    <div class="imgs-container is-centered">
-        <ImageCard v-for="n in 1000"/>
+    <div id="imgs-container" class="imgs-container" ref="aaa">
+        <ImageCard v-for="file in dados.files" :src="file" />
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { toast } from "bulma-toast";
+const aaa = ref(null);
+const route = useRoute();
+const dados = ref({});
+
+if (process.client) {
+    await getData();
+    const conteudo = document.getElementById("conteudo");
+    const container = document.getElementById("imgs-container");
+
+    function quantidadeImagens() {
+        if (container) {
+            const columns = Math.floor(
+                conteudo.clientWidth / convertRemToPixels(20)
+            );
+            container.style.setProperty("--columns", columns.toString());
+        }
+    }
+
+    quantidadeImagens();
+    window.onresize = () => quantidadeImagens();
+}
+
+async function getData() {
+    try {
+        const listing = await apiFetch(`/users/@me/list?folder=${route.query.folder}`);
+        dados.value.files = [];
+        for (const file of listing.files) {
+            const fileData = await apiFetch(`/files/${file.id}/data`);
+            dados.value.files.push(URL.createObjectURL(fileData));
+        }
+    } catch {
+        toast({
+            message: "Alguma coisa deu pau",
+            type: "is-danger",
+        });
+    }
+}
+
+function convertRemToPixels(rem) {
+    return (
+        rem * parseFloat(getComputedStyle(document.documentElement).fontSize)
+    );
+}
+
 definePageMeta({
     middleware: ["auth"],
 });
@@ -12,11 +57,14 @@ definePageMeta({
 
 <style lang="scss" scoped>
 .imgs-container {
+    margin: 2rem;
     display: grid;
-    grid-template-columns: repeat(auto-fill, clamp(20rem, 40%, 20rem));
-    width: 100%;
     height: fit-content;
-    row-gap: 2rem;
-    padding: 2rem;
+    grid-template-columns: repeat(var(--columns), 1fr);
+    gap: 2rem;
+}
+
+.pastas {
+    position: absolute;
 }
 </style>

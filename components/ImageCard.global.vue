@@ -1,14 +1,18 @@
 <template>
     <div class="card img-card">
         <figure class="image is-square img-card">
-            <div>
-                <img
-                    src="http://127.0.0.1:8080/files/cl9rm7bwk0002xf979z5jkvkj/data"
-                />
-            </div>
+            <img v-bind:src="props.src" />
         </figure>
     </div>
 </template>
+
+<script lang="ts" setup>
+const props = defineProps({
+    src: {
+        type: [String],
+    },
+});
+</script>
 
 <style lang="scss" scoped>
 .img-card {

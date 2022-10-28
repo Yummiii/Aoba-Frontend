@@ -7,7 +7,7 @@
                 </a>
             </div>
         </nav>
-        <div class="conteudo">
+        <div id="conteudo" class="conteudo">
             <NuxtPage />
         </div>
     </div>
