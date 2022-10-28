@@ -1,6 +1,6 @@
 <template>
     <div id="imgs-container" class="imgs-container" ref="aaa">
-        <ImageCard v-for="file in dados.files" :src="file" />
+        <ImageCard v-for="file in dados.files" :src="file.url" :file-id="file.id" />
     </div>
 </template>
 
@@ -30,13 +30,22 @@ if (process.client) {
 
 async function getData() {
     try {
-        const listing = await apiFetch(`/users/@me/list?folder=${route.query.folder}`);
+        let listing = {};
+        if (route.query.folder) {
+            listing = await apiFetch(`/users/@me/list?folder=${route.query.folder}`);
+        } else {
+            listing = await apiFetch(`/users/@me/list`);
+        }        
         dados.value.files = [];
         for (const file of listing.files) {
             const fileData = await apiFetch(`/files/${file.id}/data`);
-            dados.value.files.push(URL.createObjectURL(fileData));
+            dados.value.files.push({
+                url: URL.createObjectURL(fileData),
+                id: file.id
+            });
         }
-    } catch {
+    } catch (e) {
+        console.log(e);
         toast({
             message: "Alguma coisa deu pau",
             type: "is-danger",

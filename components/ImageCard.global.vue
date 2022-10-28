@@ -1,7 +1,7 @@
 <template>
     <div class="card img-card">
         <figure class="image is-square img-card">
-            <img v-bind:src="props.src" />
+            <img :src="props.src" :file-id="props.fileId" />
         </figure>
     </div>
 </template>
@@ -11,6 +11,9 @@ const props = defineProps({
     src: {
         type: [String],
     },
+    fileId: {
+        type: [String]
+    }
 });
 </script>
 
