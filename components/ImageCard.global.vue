@@ -19,8 +19,8 @@ const props = defineProps({
 
 <style lang="scss" scoped>
 .img-card {
-    height: 18rem;
-    width: 18rem;
+    // height: 18rem;
+    // width: 18rem;
     border-radius: 15px;
 
     img {

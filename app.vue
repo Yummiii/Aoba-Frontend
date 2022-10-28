@@ -6,8 +6,18 @@
                     <span class="logo-style">Aoba</span>
                 </a>
             </div>
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="buttons" v-on:click="click_up">
+                        <a class="button is-primary">
+                            <strong>Teste</strong>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </nav>
         <div id="conteudo" class="conteudo">
+            <UploadModal ref="up_modal" />
             <NuxtPage />
         </div>
     </div>
@@ -15,12 +25,19 @@
 
 <script lang="ts" setup>
 import * as bulmaToast from "bulma-toast";
+import UploadModal from "./components/UploadModal.global.vue";
+const up_modal = ref(null);
+
 bulmaToast.setDefaults({
     duration: 10000,
     position: "bottom-right",
     dismissible: true,
     animate: { in: "fadeIn", out: "fadeOut" },
 });
+
+function click_up() {
+    up_modal.value.active = true;
+}
 </script>
 
 <style lang="scss">

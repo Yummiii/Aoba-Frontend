@@ -1,6 +1,10 @@
 <template>
     <div id="imgs-container" class="imgs-container" ref="aaa">
-        <ImageCard v-for="file in dados.files" :src="file.url" :file-id="file.id" />
+        <ImageCard
+            v-for="file in dados.files"
+            :src="file.url"
+            :file-id="file.id"
+        />
     </div>
 </template>
 
@@ -10,53 +14,32 @@ const aaa = ref(null);
 const route = useRoute();
 const dados = ref({});
 
-if (process.client) {
-    await getData();
-    const conteudo = document.getElementById("conteudo");
-    const container = document.getElementById("imgs-container");
-
-    function quantidadeImagens() {
-        if (container) {
-            const columns = Math.floor(
-                conteudo.clientWidth / convertRemToPixels(20)
-            );
-            container.style.setProperty("--columns", columns.toString());
-        }
+try {
+    let listing = {};
+    if (route.query.folder) {
+        listing = await apiFetch(
+            `/users/@me/list?folder=${route.query.folder}`
+        );
+    } else {
+        listing = await apiFetch(`/users/@me/list`);
     }
-
-    quantidadeImagens();
-    window.onresize = () => quantidadeImagens();
-}
-
-async function getData() {
-    try {
-        let listing = {};
-        if (route.query.folder) {
-            listing = await apiFetch(`/users/@me/list?folder=${route.query.folder}`);
-        } else {
-            listing = await apiFetch(`/users/@me/list`);
-        }        
-        dados.value.files = [];
-        for (const file of listing.files) {
-            const fileData = await apiFetch(`/files/${file.id}/data`);
-            dados.value.files.push({
-                url: URL.createObjectURL(fileData),
-                id: file.id
-            });
-        }
-    } catch (e) {
-        console.log(e);
+    dados.value.files = [];
+    for (const file of listing.files) {
+        const fileData = await apiFetch(`/files/${file.id}/data`);
+        dados.value.files.push({
+            url: URL.createObjectURL(fileData),
+            // url: `http://192.168.1.22:8080/files/${file.id}/data`,
+            id: file.id,
+        });
+    }
+} catch (e) {
+    console.log(e);
+    if (process.client) {
         toast({
             message: "Alguma coisa deu pau",
             type: "is-danger",
         });
     }
-}
-
-function convertRemToPixels(rem) {
-    return (
-        rem * parseFloat(getComputedStyle(document.documentElement).fontSize)
-    );
 }
 
 definePageMeta({
@@ -69,8 +52,11 @@ definePageMeta({
     margin: 2rem;
     display: grid;
     height: fit-content;
-    grid-template-columns: repeat(var(--columns), 1fr);
+    width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 20rem));
+    // grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
     gap: 2rem;
+    justify-content: center;
 }
 
 .pastas {
