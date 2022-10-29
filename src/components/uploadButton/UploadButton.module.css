@@ -1,0 +1,22 @@
+.uploadButton {
+    display: flex;
+    border-radius: 50%;
+    z-index: 100;
+    position: fixed;
+    background-color: #42A5F5;
+    color: white;
+    width: 5rem;
+    height: 5rem;
+    bottom: 2rem;
+    right: 2rem;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5rem;
+    cursor: pointer;
+    transition-duration: 200ms;
+    transition-property: filter;
+}
+
+.uploadButton:hover {
+    filter: brightness(0.7);
+}

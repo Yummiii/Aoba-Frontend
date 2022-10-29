@@ -1,0 +1,7 @@
+.cardBlock {
+    display: block;
+}
+
+.imgCard img {
+    object-fit: cover;
+}

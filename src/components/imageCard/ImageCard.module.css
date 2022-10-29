@@ -1,0 +1,8 @@
+.imgCard {
+    border-radius: 15px !important;
+    overflow: hidden;
+}
+
+.imgCover {
+    object-fit: cover;
+}
