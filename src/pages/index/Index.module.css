@@ -4,7 +4,12 @@
     height: fit-content;
     width: 100%;
     grid-template-columns: repeat(auto-fit, minmax(20rem, 20rem));
-    /* grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); */
     gap: 2rem;
     justify-content: center;
 }
+
+/* @media (max-width: 19rem) {
+    .imgsContainer {
+        grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    }
+} */

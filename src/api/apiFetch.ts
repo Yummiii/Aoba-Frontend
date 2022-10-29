@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const apiFetch = axios.create({
-    baseURL: "http://127.0.0.1:8080",
+    baseURL: "http://177.43.149.106:8080",
 });
 
 apiFetch.interceptors.request.use((config) => {

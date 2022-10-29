@@ -1,14 +1,14 @@
 html,
 body {
-    height: 100vh;
-    width: 100vw;
+    height: 100%;
+    width: 100%;
     margin: unset;
     background-color: #161b27;
 }
 
 #root {
-    height: 100vh;
-    width: 100vw;
+    height: 100%;
+    width: 100%;
     display: flex;
     flex-flow: column;
 }

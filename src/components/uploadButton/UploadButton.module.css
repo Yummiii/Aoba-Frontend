@@ -17,6 +17,16 @@
     transition-property: filter;
 }
 
+@media (max-width: 734px) {
+    .uploadButton {
+        width: 3.5rem;
+        height: 3.5rem;
+        bottom:0.75rem;
+        right: 0.75rem;
+        font-size: 2rem;
+    }
+}
+
 .uploadButton:hover {
     filter: brightness(0.7);
 }
