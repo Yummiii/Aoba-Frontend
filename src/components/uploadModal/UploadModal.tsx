@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
 import { toast } from "bulma-toast";
-import { ChangeEvent, useRef, useState } from "react";
+import React, { ChangeEvent, useRef, useState } from "react";
 import apiFetch from "../../api/apiFetch";
 import ImageUploadCard from "../imageUploadCard/ImageUploadCard";
 import style from "./UploadModal.module.css";
@@ -43,7 +43,7 @@ const UploadModal: React.FC<UploadModalProps> = (props) => {
                 toast({
                     message: `Imagem upada com id: ${data.id}`,
                     type: "is-success"
-                })                
+                })
             } catch (e) {
                 if (e instanceof AxiosError) {
                     toast({
@@ -62,7 +62,7 @@ const UploadModal: React.FC<UploadModalProps> = (props) => {
 
     return (
         <div className={`modal ${props.active ? "is-active" : ""}`}>
-            <div className="modal-background"></div>
+            <div className="modal-background" onClick={close}></div>
             <div className="modal-card">
                 <header className="modal-card-head">
                     <p className="modal-card-title">Adicionar uma imagem(s)</p>

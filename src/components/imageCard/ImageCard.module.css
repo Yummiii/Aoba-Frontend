@@ -3,6 +3,58 @@
     overflow: hidden;
 }
 
+.imgCard:hover {
+    border: #42A5F5 3px solid;
+    cursor: pointer;
+}
+
+.imgCard:hover img {
+    filter: brightness(0.6);
+    transition-duration: 150ms;
+    transition-property: filter;
+}
+
+@keyframes background-pan {
+    from {
+        background-position: 0 center;
+    }
+    to {
+        background-position: -200% center;
+    }
+}
+
+.imgCard .loading {
+    display: flex;
+    height: 20rem;
+    width: 20rem;
+    justify-content: center;
+    align-items: center;
+    font-size: 4rem;
+    animation: background-pan 3s linear infinite;
+    background: linear-gradient(
+            to right,
+            rgb(98, 0, 234),
+            rgb(236, 64, 122),
+            rgb(98, 0, 234)
+    );
+    background-size: 200%;
+    color: white;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading .spinner {
+    animation: spin 2s infinite linear;
+    /*animation: circle 1.2s steps(8) infinite;*/
+}
+
 .imgCover {
     object-fit: cover;
 }

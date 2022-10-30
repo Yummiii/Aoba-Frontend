@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import apiFetch from "../../api/apiFetch";
 import style from "./ImageCard.module.css"
+import {faSpinner} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 const ImageCard: React.FC<ImageCardProps> = (props) => {
     const [src, setSrc] = useState<string>("");
@@ -11,20 +13,32 @@ const ImageCard: React.FC<ImageCardProps> = (props) => {
         })
     }, [props.imgId]);
 
-    if (!src) {
-        return <></>;
+    function click(e: { ctrlKey: boolean; }) {
+        if (e.ctrlKey) return window.open(src);
+        props.onClick(src, props.imgId, props.fileName);
     }
 
-    return (
-        <div className={`card ${style.imgCard}`}>
+    if (!src) {
+        return (<div className={`card ${style.imgCard}`}>
+            <div className={`${style.loading} `}>
+                <FontAwesomeIcon icon={faSpinner} className={style.spinner}/>
+            </div>
+        </div>)
+    }
+
+    return (<>
+        <div className={`card ${style.imgCard}`} onClick={click}>
             <figure className="image is-square">
-                <img src={src} className={style.imgCover} />
+                <img src={src} className={style.imgCover} alt={props.fileName}/>
             </figure>
         </div>
-    );
+    </>);
 };
 
 export interface ImageCardProps {
     imgId: string;
+    fileName: string;
+    onClick: (src: string, id: string, name: string) => void;
 }
+
 export default ImageCard;
