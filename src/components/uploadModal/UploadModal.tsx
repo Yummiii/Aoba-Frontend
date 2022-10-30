@@ -22,6 +22,8 @@ const UploadModal: React.FC<UploadModalProps> = (props) => {
                     return {
                         file,
                         src: URL.createObjectURL(file),
+                        pub: false, 
+                        pubList: false
                     };
                 })
             );
@@ -34,8 +36,8 @@ const UploadModal: React.FC<UploadModalProps> = (props) => {
             try {
                 const form = new FormData();
                 form.append("file", file.file);
-                form.append("pub", "false");
-                form.append("pubList", "false");
+                form.append("pub", `${file.pub}`);
+                form.append("pubList", `${file.pubList}`);
                 const {data} = await apiFetch.post("/files/upload", form);
 
                 console.log(data);
@@ -56,6 +58,16 @@ const UploadModal: React.FC<UploadModalProps> = (props) => {
 
     }
 
+    function imgPubChange(list: boolean, state: boolean, index: number) {
+        if (list) {
+            files[index].pubList = state;
+            files[index].pub = state;
+        } else {
+            files[index].pub = state;
+        }
+        console.log(files[index]);
+    }
+
     function openSelect() {
         fileSelect.current?.click();
     }
@@ -70,8 +82,8 @@ const UploadModal: React.FC<UploadModalProps> = (props) => {
                 </header>
                 <section className="modal-card-body">
                     <div className={style.cards}>
-                        {files.map((file) => (
-                            <ImageUploadCard src={file.src} key={file.src} />
+                        {files.map((file, index) => (
+                            <ImageUploadCard src={file.src} key={file.src} index={index} onPubChange={imgPubChange}/>
                         ))}
                     </div>
                 </section>
@@ -104,5 +116,7 @@ export interface UploadModalProps {
 export interface FileFoda {
     src: string;
     file: File;
+    pub: boolean;
+    pubList: boolean;
 }
 export default UploadModal;

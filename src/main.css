@@ -13,11 +13,6 @@ body {
     flex-flow: column;
 }
 
-.navbar {
-    flex: 0 1 auto;
-    background-color: #372d42;
-}
-
 .conteudo {
     flex: 1 1 auto;
     display: flex;

@@ -1,5 +1,15 @@
-.navbar {
+.navbarFoda {
+    /* flex: 0 1 auto; */
     background-color: #372d42;
+    min-height: unset;
+}
+
+.navbarElementFoda {
+    color: white;
+}
+
+.navbarElementFoda:hover {
+    color: #485fc7;
 }
 
 .logoStyle {

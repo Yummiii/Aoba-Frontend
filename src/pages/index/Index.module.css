@@ -8,6 +8,12 @@
     justify-content: center;
 }
 
+@media (max-width: 734px) {
+    .imgsContainer {
+        grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    }
+}
+
 /* @media (max-width: 19rem) {
     .imgsContainer {
         grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));

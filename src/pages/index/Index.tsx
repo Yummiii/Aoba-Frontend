@@ -11,7 +11,7 @@ import Viewer from 'react-viewer';
 
 export const imageObs = observable({files: [] as File[]});
 
-const App: React.FC = () => {
+const App: React.FC<IndexProps> = (props) => {
     const logged = useLogin();
     const state = useSelector(() => imageObs.files.get());
     const [modalData, setModalData] = useState<ImageViewModalData>({active: false, src: "", id: "", name: ""});
@@ -19,7 +19,7 @@ const App: React.FC = () => {
     useEffect(() => {
         if (!logged) return;
         apiFetch
-            .get<UserList>("/users/@me/list")
+            .get<UserList>(props.public ? "/files/public" : "/users/@me/list")
             .then(({data}) => imageObs.files.set(data.files))
             .catch((e) => {
                 console.log("xablau");
@@ -82,6 +82,10 @@ export interface UserList {
 export interface Image {
     src: string;
     id: string;
+}
+
+export interface IndexProps {
+    public: boolean
 }
 
 export default App;

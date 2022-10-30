@@ -19,12 +19,16 @@ bulmaToast.setDefaults({
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <App />,
+        element: <App public={false} />,
     },
     {
         path: "/login",
         element: <Login />,
     },
+    {
+        path: "/pub",
+        element: <App public={true} />
+    }
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(

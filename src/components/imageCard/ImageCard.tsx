@@ -8,9 +8,13 @@ const ImageCard: React.FC<ImageCardProps> = (props) => {
     const [src, setSrc] = useState<string>("");
 
     useEffect(() => {
-        apiFetch.get(`/files/${props.imgId}/data`, {responseType: "blob"}).then(img => {
-            setSrc(URL.createObjectURL(img.data));
-        })
+        if (!props.public) {
+            apiFetch.get(`/files/${props.imgId}/data`, {responseType: "blob"}).then(img => {
+                setSrc(URL.createObjectURL(img.data));
+            })
+        } else {
+            setSrc(`${import.meta.env.VITE_API_URL}files/${props.imgId}/data`)
+        }
     }, [props.imgId]);
 
     function click(e: { ctrlKey: boolean; }) {
@@ -37,7 +41,9 @@ const ImageCard: React.FC<ImageCardProps> = (props) => {
 
 export interface ImageCardProps {
     imgId: string;
+    public?: boolean;
     fileName: string;
+    
     onClick: (src: string, id: string, name: string) => void;
 }
 
