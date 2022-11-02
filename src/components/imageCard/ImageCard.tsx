@@ -4,29 +4,32 @@ import style from "./ImageCard.module.css";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import CryptoJSW from "@originjs/crypto-js-wasm";
+import {base64ToBlob} from 'base64-blob'
 
 const ImageCard: React.FC<ImageCardProps> = (props) => {
     const [src, setSrc] = useState<string>("");
 
     useEffect(() => {
-        if (!props.public) {
-            apiFetch
-                .get(`/files/${props.imgId}/data`, { responseType: "json" })
-                .then(async (resp) => {
-                    await CryptoJSW.AES.loadWasm();
-                    try {
-                        // const img = CryptoJSW.AES.decrypt(
-                        //     resp.data.content,
-                        //     localStorage.getItem("crypt_key") as string
-                        // );
-                        // setSrc(img.toString(CryptoJSW.enc.Utf8));
-                    } catch {
-                        // setSrc("https://cdn.discordapp.com/attachments/901878705234788412/1037160650734051359/unknown.png");
+        apiFetch
+            .get(`/files/${props.imgId}/data`, { responseType: "json" })
+            .then(async (resp) => {
+                await CryptoJSW.AES.loadWasm();
+                try {
+                    if (!props.public) {
+                        const img = CryptoJSW.AES.decrypt(
+                            resp.data.content,
+                            localStorage.getItem("crypt_key") as string
+                        );
+                        setSrc(URL.createObjectURL(await base64ToBlob(img.toString(CryptoJSW.enc.Utf8))));
+                    } else {
+                        setSrc(URL.createObjectURL(await base64ToBlob(resp.data.content)));
                     }
-                });
-        } else {
-            setSrc(`${import.meta.env.VITE_API_URL}files/${props.imgId}/data`);
-        }
+                } catch {
+                    setSrc(
+                        "https://cdn.discordapp.com/attachments/901878705234788412/1037160650734051359/unknown.png"
+                    );
+                }
+            });
     }, [props.imgId, props.public]);
 
     function click(e: { ctrlKey: boolean }) {

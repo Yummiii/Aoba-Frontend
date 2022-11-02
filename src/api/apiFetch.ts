@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const apiFetch = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
+    baseURL: localStorage.getItem("API_URL_OVERRIDE") || import.meta.env.VITE_API_URL,
 });
 
 apiFetch.interceptors.request.use((config) => {

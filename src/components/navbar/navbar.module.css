@@ -8,8 +8,9 @@
     color: white;
 }
 
-.navbarElementFoda:hover {
+.navbarElementFoda:hover, .navbarElementFoda:focus {
     color: #485fc7;
+    background-color: rgba(0,0,0,.05) !important;
 }
 
 .logoStyle {
@@ -17,4 +18,43 @@
     font-size: 2rem;
     font-weight: 600;
     color: white;
+}
+
+.navBurgerFoda {
+    height: unset;
+    color: white
+}
+
+.navBurgerFoda:hover {
+    color: #485fc7;
+}
+
+.navbarMenuFoda {
+    background-color: #372d42;
+}
+
+.profile {
+    display: flex;
+    align-self: center;
+    align-items: center;
+    margin-right: 1rem;
+    color: white;
+    gap: 0.5rem;
+    position: relative;
+}
+
+.profilePic {
+    height: 2.5rem;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profileName:hover {
+    color: #485fc7;
+    cursor: pointer;
+}
+
+.dropdownSupimpa {
+    position: unset;
 }

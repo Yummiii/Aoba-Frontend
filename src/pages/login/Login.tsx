@@ -10,6 +10,7 @@ import apiFetch from "../../api/apiFetch";
 const Login: React.FC = () => {
     const navigate = useNavigate();
     const form = useForm<LoginDto>();
+
     async function login(e: LoginDto) {
         try {
             const {data} = await apiFetch.post("/users/authenticate", e);
@@ -134,7 +135,7 @@ const Login: React.FC = () => {
                     </form>
                 </div>
             </div>
-            <div className={style.background}></div>
+            <div className={style.background} style={{backgroundImage: `url(${localStorage.getItem("API_URL_OVERRIDE") || import.meta.env.VITE_API_URL}/files/public/random)`}}></div>
         </>
     );
 };

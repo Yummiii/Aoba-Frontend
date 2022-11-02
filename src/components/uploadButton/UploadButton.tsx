@@ -7,7 +7,7 @@ import useLogin from "../../hooks/login";
 
 const UploadButton: React.FC = () => {
     const [active, setActive] = useState(false);
-    const logged = useLogin(false)
+    const auth = useLogin(false)
 
     function openModal() {
         setActive(true);
@@ -17,7 +17,7 @@ const UploadButton: React.FC = () => {
         setActive(false);
     }
 
-    if (!logged) {
+    if (!auth.logged) {
         return <></>;
     }
 

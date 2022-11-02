@@ -15,7 +15,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 export const imageObs = observable({ files: [] as File[] });
 
 const App: React.FC<IndexProps> = (props) => {
-    const logged = useLogin(!props.public, true);
+    const { logged } = useLogin(!props.public, true);
     const state = useSelector(() => imageObs.files.get());
     const [pages, setPages] = useState(0);
     const [searchParams, setSearchParams] = useSearchParams();
@@ -82,7 +82,6 @@ const App: React.FC<IndexProps> = (props) => {
     }
 
     function modalClose() {
-
         setModalData({
             active: false,
             src: "",
@@ -128,6 +127,7 @@ const App: React.FC<IndexProps> = (props) => {
                         fileName={file.fileName}
                         key={file.id}
                         onClick={imgClick}
+                        public={file.pub && file.pubListing}
                     />
                 ))}
             </div>
@@ -138,7 +138,7 @@ const App: React.FC<IndexProps> = (props) => {
                     onClick={() => changePage(page - 1)}
                 />
                 <p className={style.text} onClick={selectPage}>
-                    {page} de {pages}
+                    {page} de {pages > 1 ? pages : 1}
                 </p>
                 <FontAwesomeIcon
                     icon={faAngleRight}

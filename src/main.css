@@ -4,6 +4,7 @@ body {
     width: 100%;
     margin: unset;
     background-color: #161b27;
+    overflow: unset !important;
 }
 
 #root {

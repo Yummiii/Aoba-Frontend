@@ -50,14 +50,19 @@ const UploadModal: React.FC<UploadModalProps> = (props) => {
         files.forEach(async (file) => {
             try {
                 await CryptoJSW.AES.loadWasm();
-                const img = CryptoJSW.AES.encrypt(await getBase64(file.file), localStorage.getItem("crypt_key") as string);
+                let img = "";
+                if (file.pub && file.pubList) {
+                    img = await getBase64(file.file);
+                } else {
+                    img = CryptoJSW.AES.encrypt(await getBase64(file.file), localStorage.getItem("crypt_key") as string).toString();
+                }
 
                 const {data} = await apiFetch.post("/files/upload", {
                     mimeType: file.file.type,
                     fileName: file.file.name,
                     pub: file.pub,
                     pubList: file.pubList,
-                    content: img.toString()
+                    content: img
                 });
 
                 console.log(data);

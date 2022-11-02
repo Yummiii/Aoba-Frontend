@@ -16,6 +16,7 @@
     "@originjs/crypto-js-wasm": "^1.1.0",
     "animate.css": "^4.1.1",
     "axios": "^1.1.3",
+    "base64-blob": "^1.4.1",
     "buffer": "^6.0.3",
     "bulma": "^0.9.4",
     "bulma-toast": "^2.4.1",
