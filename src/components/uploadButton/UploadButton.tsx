@@ -3,10 +3,11 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import UploadModal from "../uploadModal/UploadModal";
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import useLogin from "../../hooks/login";
 
 const UploadButton: React.FC = () => {
     const [active, setActive] = useState(false);
+    const logged = useLogin(false)
 
     function openModal() {
         setActive(true);
@@ -14,6 +15,10 @@ const UploadButton: React.FC = () => {
 
     function closeModal() {
         setActive(false);
+    }
+
+    if (!logged) {
+        return <></>;
     }
 
     return (

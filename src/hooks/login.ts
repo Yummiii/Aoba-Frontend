@@ -1,29 +1,48 @@
-import {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import apiFetch from "../api/apiFetch";
-import {AxiosError} from "axios";
+import { AxiosError } from "axios";
+import { observable } from "@legendapp/state";
+import { useSelector } from "@legendapp/state/react";
 
-export default function useLogin() {
+export const authObs = observable({ logged: false, fetched: false });
+
+export default function useLogin(redirect = true, forceFetch = false) {
     const navigate = useNavigate();
-    const [logged, setLogged] = useState(false);
+    const state = useSelector(() => authObs.get());
+
     useEffect(() => {
-        if (!localStorage.getItem("token")) {
+        if (state.fetched && !forceFetch) return;
+
+        if (!localStorage.getItem("token") && redirect) {
             navigate("/login");
         } else {
-            console.log("aqui")
-            apiFetch.get("/users/@me").then(({data}) => {
-                console.log(data);
-                setLogged(true);
-            }).catch(e => {
-                if (e instanceof AxiosError) {
-                  if (e.response?.status == 403) {
-                      localStorage.removeItem("token");
-                      navigate("/login")
-                  }
-                }
-            });
-        }
+            console.log("fez request");
+            apiFetch
+                .get("/users/@me")
+                .then(({ data }) => {
+                    authObs.set({
+                        fetched: true,
+                        logged: true,
+                    });
+                })
+                .catch((e) => {
+                    if (e instanceof AxiosError) {
+                        if (e.response?.status == 403) {
+                            authObs.set({
+                                fetched: true,
+                                logged: false,
+                            });
 
-    }, [navigate]);
-    return logged;
+                            localStorage.removeItem("token");
+                            if (redirect) {
+                                navigate("/login");
+                            }
+                        }
+                    }
+                });
+        }
+    }, [navigate, state.fetched]);
+
+    return state.logged;
 }

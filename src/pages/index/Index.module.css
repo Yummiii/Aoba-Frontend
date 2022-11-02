@@ -1,5 +1,6 @@
 .imgsContainer {
-    margin: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
     display: grid;
     height: fit-content;
     width: 100%;
@@ -10,8 +11,33 @@
 
 @media (max-width: 734px) {
     .imgsContainer {
+        
         grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
     }
+}
+
+.pagesControl {
+    display: flex;
+    flex: 1 1 auto;
+    width: 100%;
+    font-size: 2rem;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.pagesControl .arrows {
+    cursor: pointer;
+}
+
+.pagesControl .text:hover {
+    cursor: pointer;
+    text-decoration: underline dotted;
+    text-decoration-color: #42a5f5
+}
+
+.pagesControl .arrows:hover {
+    color: #42a5f5;
 }
 
 /* @media (max-width: 19rem) {

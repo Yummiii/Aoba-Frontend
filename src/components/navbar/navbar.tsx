@@ -1,6 +1,7 @@
 import style from "./navbar.module.css";
 import { faGlobe } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Link } from "react-router-dom";
 
 const Navbar: React.FC = () => {
     return (
@@ -10,16 +11,20 @@ const Navbar: React.FC = () => {
             aria-label="main navigation"
         >
             <div className="navbar-brand">
-                <a className="navbar-item" href="/">
+                <Link className="navbar-item" to="/">
                     <span className={style.logoStyle}>Aoba</span>
-                </a>
+                </Link>
             </div>
 
             <div id="navbarBasicExample" className="navbar-menu">
                 <div className="navbar-start">
-                    <a className={`navbar-item ${style.navbarElementFoda}`} href="/pub">
-                        <FontAwesomeIcon icon={faGlobe} className="fa-fw"/>Públicas
-                    </a>
+                    <Link
+                        to="/pub"
+                        className={`navbar-item ${style.navbarElementFoda}`}
+                    >
+                        <FontAwesomeIcon icon={faGlobe} className="fa-fw" />
+                        Públicas
+                    </Link>
                 </div>
             </div>
         </nav>

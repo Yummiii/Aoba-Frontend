@@ -5,6 +5,7 @@ import apiFetch from "../../api/apiFetch";
 import ImageUploadCard from "../imageUploadCard/ImageUploadCard";
 import style from "./UploadModal.module.css";
 import {imageObs} from "../../pages/index/Index";
+import CryptoJSW from "@originjs/crypto-js-wasm";
 
 const UploadModal: React.FC<UploadModalProps> = (props) => {
     const fileSelect = useRef<HTMLInputElement>(null);
@@ -30,21 +31,40 @@ const UploadModal: React.FC<UploadModalProps> = (props) => {
         }
     }
 
+    function getBase64(file: File) {
+        return new Promise<string>((resolve, reject) => {
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function () {
+                resolve(reader.result as string);
+            };
+            reader.onerror = function (error) {
+                reject(error);
+            };
+        })
+     }
+     
+
     function upload() {
         close();
         files.forEach(async (file) => {
             try {
-                const form = new FormData();
-                form.append("file", file.file);
-                form.append("pub", `${file.pub}`);
-                form.append("pubList", `${file.pubList}`);
-                const {data} = await apiFetch.post("/files/upload", form);
+                await CryptoJSW.AES.loadWasm();
+                const img = CryptoJSW.AES.encrypt(await getBase64(file.file), localStorage.getItem("crypt_key") as string);
+
+                const {data} = await apiFetch.post("/files/upload", {
+                    mimeType: file.file.type,
+                    fileName: file.file.name,
+                    pub: file.pub,
+                    pubList: file.pubList,
+                    content: img.toString()
+                });
 
                 console.log(data);
                 imageObs.files.unshift(data);
                 toast({
-                    message: `Imagem upada com id: ${data.id}`,
-                    type: "is-success"
+                   message: `Imagem upada com id: ${data.id}`,
+                   type: "is-success"
                 })
             } catch (e) {
                 if (e instanceof AxiosError) {
