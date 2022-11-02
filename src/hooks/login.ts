@@ -12,6 +12,10 @@ export default function useLogin(redirect = true, forceFetch = false) {
     const state = useSelector(() => authObs.get());
 
     useEffect(() => {
+        if (!localStorage.getItem("crypt_key")) {
+            localStorage.setItem("crypt_key", prompt("coloca a key vagaba") as string);
+        }
+
         if (state.fetched && !forceFetch) return;
 
         if (!localStorage.getItem("token") && redirect) {

@@ -15,13 +15,13 @@ const ImageCard: React.FC<ImageCardProps> = (props) => {
                 .then(async (resp) => {
                     await CryptoJSW.AES.loadWasm();
                     try {
-                        const img = CryptoJSW.AES.decrypt(
-                            resp.data.content,
-                            localStorage.getItem("crypt_key") as string
-                        );
-                        setSrc(img.toString(CryptoJSW.enc.Utf8));
+                        // const img = CryptoJSW.AES.decrypt(
+                        //     resp.data.content,
+                        //     localStorage.getItem("crypt_key") as string
+                        // );
+                        // setSrc(img.toString(CryptoJSW.enc.Utf8));
                     } catch {
-                        setSrc("https://cdn.discordapp.com/attachments/901878705234788412/1037160650734051359/unknown.png");
+                        // setSrc("https://cdn.discordapp.com/attachments/901878705234788412/1037160650734051359/unknown.png");
                     }
                 });
         } else {

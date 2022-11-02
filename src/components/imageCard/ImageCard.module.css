@@ -26,7 +26,8 @@
 .imgCard .loading {
     display: flex;
     height: 20rem;
-    width: 20rem;
+    /* width: 20rem; */
+    /* width: fit-content; */
     justify-content: center;
     align-items: center;
     font-size: 4rem;
