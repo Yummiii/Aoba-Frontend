@@ -9,8 +9,12 @@ import useLogin from "../../hooks/login";
 const Navbar: React.FC = () => {
     const [active, setActive] = useState(false);
     const { logged, name, id } = useLogin(false);
-    const [avatar, setAvatar] = useState(`${localStorage.getItem("API_URL_OVERRIDE") || import.meta.env.VITE_API_URL}/users/${id}/avatar`);
+    const [avatar, setAvatar] = useState("");
     const [dropdownActive, setDropDownActive] = useState(false);
+
+    if (logged) {
+        setAvatar(`${localStorage.getItem("API_URL_OVERRIDE") || import.meta.env.VITE_API_URL}/users/${id}/avatar`);
+    }
 
     function burgerClick() {
         setActive((x) => !x);
