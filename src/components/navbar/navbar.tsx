@@ -2,7 +2,7 @@ import style from "./navbar.module.css";
 import { faGlobe } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import useLogin from "../../hooks/login";
 
@@ -12,9 +12,11 @@ const Navbar: React.FC = () => {
     const [avatar, setAvatar] = useState("");
     const [dropdownActive, setDropDownActive] = useState(false);
 
-    if (logged) {
-        setAvatar(`${localStorage.getItem("API_URL_OVERRIDE") || import.meta.env.VITE_API_URL}/users/${id}/avatar`);
-    }
+    useEffect(() => {
+        if (logged) {
+            setAvatar(`${localStorage.getItem("API_URL_OVERRIDE") || import.meta.env.VITE_API_URL}/users/${id}/avatar`);
+        }
+    }, [logged])
 
     function burgerClick() {
         setActive((x) => !x);
