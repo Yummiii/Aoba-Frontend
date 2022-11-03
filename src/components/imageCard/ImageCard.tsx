@@ -21,7 +21,10 @@ const ImageCard: React.FC<ImageCardProps> = (props) => {
                             resp.data.content,
                             localStorage.getItem("crypt_key") as string
                         );
-                        setSrc(URL.createObjectURL(await base64ToBlob(img.toString(CryptoJSW.enc.Utf8))));
+                        const file = new File([await base64ToBlob(img.toString(CryptoJSW.enc.Utf8))], props.fileName, {
+                            type: resp.data.contentType
+                        });
+                        setSrc(URL.createObjectURL(file));
                     } else {
                         setSrc(URL.createObjectURL(await base64ToBlob(resp.data.content)));
                     }
