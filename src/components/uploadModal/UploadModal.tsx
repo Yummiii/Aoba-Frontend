@@ -65,7 +65,10 @@ const UploadModal: React.FC<UploadModalProps> = (props) => {
                     content: img
                 });
 
-                console.log(data);
+                if (imageObs.files.length + 1 > props.size) {
+                    imageObs.pages.set(Math.ceil((imageObs.files.length + 1) / props.size));
+                    imageObs.files.pop();
+                }
                 imageObs.files.unshift(data);
                 toast({
                    message: `Imagem upada com id: ${data.id}`,
@@ -136,6 +139,7 @@ const UploadModal: React.FC<UploadModalProps> = (props) => {
 };
 export interface UploadModalProps {
     active: boolean;
+    size: number;
     onClose: () => void;
 }
 export interface FileFoda {

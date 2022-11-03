@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { MouseEventHandler, useEffect, useState } from "react";
 import apiFetch from "../../api/apiFetch";
 import style from "./ImageCard.module.css";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
@@ -24,7 +24,8 @@ const ImageCard: React.FC<ImageCardProps> = (props) => {
                     } else {
                         setSrc(URL.createObjectURL(await base64ToBlob(resp.data.content)));
                     }
-                } catch {
+                } catch (e) {
+                    console.log(e);
                     setSrc(
                         "https://cdn.discordapp.com/attachments/901878705234788412/1037160650734051359/unknown.png"
                     );
@@ -35,6 +36,14 @@ const ImageCard: React.FC<ImageCardProps> = (props) => {
     function click(e: { ctrlKey: boolean }) {
         if (e.ctrlKey) return window.open(src);
         props.onClick(src, props.imgId, props.fileName);
+    }
+
+    function menu(e: React.MouseEvent<HTMLDivElement>) {
+        if (props.onContextMenu) {
+            e.stopPropagation();
+            e.preventDefault();
+            props.onContextMenu(e, props.imgId);
+        }
     }
 
     if (!src) {
@@ -52,7 +61,7 @@ const ImageCard: React.FC<ImageCardProps> = (props) => {
 
     return (
         <>
-            <div className={`card ${style.imgCard}`} onClick={click}>
+            <div className={`card ${style.imgCard}`} onClick={click} onContextMenu={menu}>
                 <figure className="image is-square">
                     <img
                         src={src}
@@ -71,6 +80,7 @@ export interface ImageCardProps {
     fileName: string;
 
     onClick: (src: string, id: string, name: string) => void;
+    onContextMenu?: (e: React.MouseEvent<HTMLDivElement>, id: string) => void;
 }
 
 export default ImageCard;

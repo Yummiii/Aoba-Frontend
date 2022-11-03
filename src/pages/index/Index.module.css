@@ -46,3 +46,8 @@
         grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
     }
 } */
+
+.menu {
+    /* height: "3rem", width: "3rem", backgroundColor: "red", position: "absolute" */
+    position: absolute !important;
+}

@@ -5,7 +5,7 @@ import UploadModal from "../uploadModal/UploadModal";
 import { useState } from "react";
 import useLogin from "../../hooks/login";
 
-const UploadButton: React.FC = () => {
+const UploadButton: React.FC<{size: number}> = (props) => {
     const [active, setActive] = useState(false);
     const auth = useLogin(false)
 
@@ -23,7 +23,7 @@ const UploadButton: React.FC = () => {
 
     return (
         <>
-            <UploadModal active={active} onClose={closeModal}/>
+            <UploadModal size={props.size} active={active} onClose={closeModal}/>
             <div className={style.uploadButton} onClick={openModal}>
                 <FontAwesomeIcon icon={faPlus} />
             </div>

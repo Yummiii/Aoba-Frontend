@@ -12,12 +12,23 @@ import { useSearchParams } from "react-router-dom";
 import { faAngleRight, faAngleLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export const imageObs = observable({ files: [] as File[] });
+export const imageObs = observable({ files: [] as File[], pages: 1 });
 
 const App: React.FC<IndexProps> = (props) => {
     const { logged } = useLogin(!props.public, true);
     const state = useSelector(() => imageObs.files.get());
-    const [pages, setPages] = useState(0);
+    const pages = useSelector(() => imageObs.pages.get())
+    const [menuState, setMenuState] = useState<{
+        x: number;
+        y: number;
+        id: string;
+        active: boolean;
+    }>({
+        x: 0,
+        y: 0,
+        id: "",
+        active: false,
+    });
     const [searchParams, setSearchParams] = useSearchParams();
     const [modalData, setModalData] = useState<ImageViewModalData>({
         active: false,
@@ -26,6 +37,7 @@ const App: React.FC<IndexProps> = (props) => {
         name: "",
     });
     const page = Number(searchParams.get("page")) || 1;
+    const size = Number(searchParams.get("size")) || 15;
 
     useEffect(() => {
         if (!logged && !props.public) return;
@@ -34,10 +46,10 @@ const App: React.FC<IndexProps> = (props) => {
             .get<UserList>(
                 `${
                     props.public ? "/files/public" : "/users/@me/list"
-                }?size=15&page=${page}`
+                }?size=${size}&page=${page}`
             )
             .then(({ data }) => {
-                setPages(data.totalPages);
+                imageObs.pages.set(data.totalPages);
                 imageObs.files.set(data.files);
             })
             .catch((e) => {
@@ -48,7 +60,7 @@ const App: React.FC<IndexProps> = (props) => {
                     type: "is-danger",
                 });
             });
-    }, [logged, props.public, page, pages]);
+    }, [logged, props.public, page, pages, size]);
 
     useEffect(() => {
         const handler = (e: KeyboardEvent) => {
@@ -102,8 +114,43 @@ const App: React.FC<IndexProps> = (props) => {
         setSearchParams(newParams);
     }
 
+    function menu(e: React.MouseEvent<HTMLDivElement>, id: string) {
+        console.log(`X:${e.pageX} Y:${e.pageY} ID:[${id}]`);
+        setMenuState({
+            x: e.pageX,
+            y: e.pageY,
+            active: true,
+            id
+        });
+    }
+
+    function hideMenu() {
+        setMenuState({
+            x: 0,
+            y: 0,
+            active: false,
+            id: ""
+        })
+    }
+
+    async function deleteImg() {
+        try {
+            await apiFetch.delete(`/files/delete/${menuState.id}`);
+            imageObs.files.set((x) => x.filter(y => y.id != menuState.id));
+            toast({
+                message: "Imagem excluida",
+                type: "is-success"
+            })
+        } catch {
+            toast({
+                message: "Alguma coisa deu pau",
+                type: "is-danger",
+            });
+        }
+    }
+
     return (
-        <>
+        <div style={{height: "100%", width: "100%"}} onClick={hideMenu}>
             <Viewer
                 visible={modalData.active}
                 images={[
@@ -119,15 +166,30 @@ const App: React.FC<IndexProps> = (props) => {
                 onClose={modalClose}
                 onMaskClick={modalClose}
             />
-            <UploadButton />
+            <div
+                className={`dropdown ${menuState.active ? "is-active" : ""} ${style.menu}`}
+                style={{ top: menuState.y, left: menuState.x }}
+            >
+                <div className="dropdown-menu" role="menu">
+                    <div className="dropdown-content">
+                        {/* <hr className="dropdown-divider" /> */}
+                        <a className="dropdown-item" onClick={deleteImg}>
+                            Excluir
+                        </a>
+                        {/* <hr className="dropdown-divider" /> */}
+                    </div>
+                </div>
+            </div>
+            <UploadButton size={size} />
             <div className={style.imgsContainer}>
-                {state.map((file) => (
+                {state.slice(0, size).map((file) => (
                     <ImageCard
                         imgId={file.id}
                         fileName={file.fileName}
                         key={file.id}
                         onClick={imgClick}
                         public={file.pub && file.pubListing}
+                        onContextMenu={menu}
                     />
                 ))}
             </div>
@@ -146,7 +208,7 @@ const App: React.FC<IndexProps> = (props) => {
                     onClick={() => changePage(page + 1)}
                 />
             </div>
-        </>
+        </div>
     );
 };
 
@@ -174,6 +236,7 @@ export interface UserList {
     folders: Folder[];
     files: File[];
     totalPages: number;
+    totalElements: number;
 }
 
 export interface Image {
