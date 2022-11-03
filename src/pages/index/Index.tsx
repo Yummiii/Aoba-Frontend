@@ -1,5 +1,5 @@
 import { toast } from "bulma-toast";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import apiFetch from "../../api/apiFetch";
 import ImageCard from "../../components/imageCard/ImageCard";
 import useLogin from "../../hooks/login";
@@ -11,23 +11,38 @@ import Viewer from "react-viewer";
 import { useSearchParams } from "react-router-dom";
 import { faAngleRight, faAngleLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from "react";
+import CryptoJSW from "@originjs/crypto-js-wasm";
 
 export const imageObs = observable({ files: [] as File[], pages: 1 });
 
 const App: React.FC<IndexProps> = (props) => {
     const { logged } = useLogin(!props.public, true);
     const state = useSelector(() => imageObs.files.get());
-    const pages = useSelector(() => imageObs.pages.get())
+    const pages = useSelector(() => imageObs.pages.get());
+    const dropdown = React.createRef<HTMLDivElement>();
     const [menuState, setMenuState] = useState<{
         x: number;
         y: number;
         id: string;
+        element: HTMLDivElement | null;
+        focus: string;
         active: boolean;
+        disabledPub: boolean;
+        pub: boolean;
+        pubList: boolean;
+        src: string;
     }>({
         x: 0,
         y: 0,
         id: "",
         active: false,
+        element: null,
+        focus: "",
+        disabledPub: false,
+        pub: false,
+        pubList: false,
+        src: "",
     });
     const [searchParams, setSearchParams] = useSearchParams();
     const [modalData, setModalData] = useState<ImageViewModalData>({
@@ -84,12 +99,12 @@ const App: React.FC<IndexProps> = (props) => {
         };
     }, [changePage]);
 
-    function imgClick(src: string, id: string, name: string) {
+    function imgClick(file: File, src: string) {
         setModalData({
             active: true,
             src,
-            id,
-            name,
+            id: file.id,
+            name: file.fileName,
         });
     }
 
@@ -114,33 +129,58 @@ const App: React.FC<IndexProps> = (props) => {
         setSearchParams(newParams);
     }
 
-    function menu(e: React.MouseEvent<HTMLDivElement>, id: string) {
-        console.log(`X:${e.pageX} Y:${e.pageY} ID:[${id}]`);
+    function menu(
+        e: React.MouseEvent<HTMLDivElement>,
+        file: File,
+        focus: string,
+        src: string
+    ) {
+        e.currentTarget.classList.add(focus);
         setMenuState({
             x: e.pageX,
             y: e.pageY,
             active: true,
-            id
+            focus,
+            element: e.currentTarget,
+            disabledPub: file.pubListing,
+            pub: file.pub,
+            pubList: file.pubListing,
+            id: file.id,
+            src,
         });
     }
 
-    function hideMenu() {
+    function hideMenu(e: React.MouseEvent<HTMLDivElement>) {
+        if (!dropdown.current?.children[0].contains(e.target as Node)) {
+            hide();
+        }
+    }
+
+    function hide() {
+        menuState.element?.classList.remove(menuState.focus);
         setMenuState({
             x: 0,
             y: 0,
             active: false,
-            id: ""
-        })
+            element: null,
+            focus: "",
+            disabledPub: false,
+            pub: false,
+            id: "",
+            pubList: false,
+            src: "",
+        });
     }
 
     async function deleteImg() {
         try {
-            await apiFetch.delete(`/files/delete/${menuState.id}`);
-            imageObs.files.set((x) => x.filter(y => y.id != menuState.id));
+            await apiFetch.delete(`/files/${menuState.id}/delete`);
+            imageObs.files.set((x) => x.filter((y) => y.id != menuState.id));
+            hide();
             toast({
                 message: "Imagem excluida",
-                type: "is-success"
-            })
+                type: "is-success",
+            });
         } catch {
             toast({
                 message: "Alguma coisa deu pau",
@@ -149,8 +189,53 @@ const App: React.FC<IndexProps> = (props) => {
         }
     }
 
+    async function pubListChange(e: ChangeEvent<HTMLInputElement>) {
+        setMenuState((x) => ({
+            ...x,
+            disabledPub: e.target.checked,
+            pub: e.target.checked,
+            pubList: e.target.checked,
+        }));
+        await change(e.target.checked, e.target.checked);
+    }
+
+    async function pubChange(e: ChangeEvent<HTMLInputElement>) {
+        setMenuState((x) => ({ ...x, pub: e.target.checked }));
+        await change(e.target.checked, false);
+    }
+
+    async function change(pub: boolean, pubList: boolean) {
+        let content = ""
+        if(pub) {
+            content = await getBase64FromUrl(menuState.src);
+        } else {
+            await CryptoJSW.AES.loadWasm();
+            content = CryptoJSW.AES.encrypt(await getBase64FromUrl(menuState.src), localStorage.getItem("crypt_key") as string).toString();
+        }
+
+        console.log(content);
+        let a = await apiFetch.put(`/files/${menuState.id}/update`, {
+            pub,
+            pubList,
+            content
+        });
+        console.log(a);
+    }
+
+    const getBase64FromUrl = async (url: string) => {
+        const data = await fetch(url);
+        const blob = await data.blob();
+        return new Promise<string>((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = () => {
+                resolve(reader.result as string);
+            };
+        });
+    };
+
     return (
-        <div style={{height: "100%", width: "100%"}} onClick={hideMenu}>
+        <div style={{ height: "100%", width: "100%" }} onClick={hideMenu}>
             <Viewer
                 visible={modalData.active}
                 images={[
@@ -167,16 +252,46 @@ const App: React.FC<IndexProps> = (props) => {
                 onMaskClick={modalClose}
             />
             <div
-                className={`dropdown ${menuState.active ? "is-active" : ""} ${style.menu}`}
+                className={`dropdown ${menuState.active ? "is-active" : ""} ${
+                    style.menu
+                }`}
                 style={{ top: menuState.y, left: menuState.x }}
+                ref={dropdown}
             >
                 <div className="dropdown-menu" role="menu">
                     <div className="dropdown-content">
                         {/* <hr className="dropdown-divider" /> */}
-                        <a className="dropdown-item" onClick={deleteImg}>
+                        <a
+                            className="dropdown-item"
+                            onClick={deleteImg}
+                            style={{ color: "red" }}
+                        >
                             Excluir
                         </a>
-                        {/* <hr className="dropdown-divider" /> */}
+                        <hr className="dropdown-divider" />
+                        <a className={`dropdown-item`}>
+                            <label className="checkbox">
+                                <input
+                                    type="checkbox"
+                                    className="fa-fw"
+                                    checked={menuState.pub}
+                                    disabled={menuState.disabledPub}
+                                    onChange={pubChange}
+                                />
+                                Pública
+                            </label>
+                        </a>
+                        <a className={`dropdown-item`}>
+                            <label className="checkbox">
+                                <input
+                                    type="checkbox"
+                                    className="fa-fw"
+                                    checked={menuState.pubList}
+                                    onChange={pubListChange}
+                                />
+                                Lista pública
+                            </label>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -184,11 +299,9 @@ const App: React.FC<IndexProps> = (props) => {
             <div className={style.imgsContainer}>
                 {state.slice(0, size).map((file) => (
                     <ImageCard
-                        imgId={file.id}
-                        fileName={file.fileName}
+                        file={file}
                         key={file.id}
                         onClick={imgClick}
-                        public={file.pub && file.pubListing}
                         onContextMenu={menu}
                     />
                 ))}
