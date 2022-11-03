@@ -16,6 +16,7 @@ const ImageCard: React.FC<ImageCardProps> = (props) => {
                 await CryptoJSW.AES.loadWasm();
                 try {
                     if (!props.public) {
+                        console.log(localStorage.getItem("crypt_key"));
                         const img = CryptoJSW.AES.decrypt(
                             resp.data.content,
                             localStorage.getItem("crypt_key") as string
